@@ -1,51 +1,27 @@
 
 # coding: utf-8
 
-# # GAN
-
-# In[1]:
-
 
 import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
-get_ipython().magic('matplotlib inline')
 
 
-# ## The Data
 
-# In[2]:
-
-
+# Data 
 from tensorflow.examples.tutorials.mnist import input_data
 mnist = input_data.read_data_sets("../03-Convolutional-Neural-Networks/MNIST_data/",one_hot=True)
 
 
-# In[3]:
-
-
+# Data Visualisation
 plt.imshow(mnist.train.images[5].reshape(28,28),cmap='Greys')
 
 
-# # The Networks
-# 
-# Useful Links:
-# 
-# https://stackoverflow.com/questions/45307072/using-leaky-relu-in-tensorflow
 
-# ### Activation Function
-
-# In[ ]:
+#Neural Network 
 
 
-
-
-
-# ## The Generator
-
-# In[4]:
-
-
+#The Generator
 def generator(z,reuse=None):
     with tf.variable_scope('gen',reuse=reuse):
         hidden1 = tf.layers.dense(inputs=z,units=128)
@@ -60,11 +36,7 @@ def generator(z,reuse=None):
     
 
 
-# ## The Discriminator
-
-# In[5]:
-
-
+#The Discriminator
 def discriminator(X,reuse=None):
     with tf.variable_scope('dis',reuse=reuse):
         hidden1 = tf.layers.dense(inputs=X,units=128)
@@ -81,83 +53,40 @@ def discriminator(X,reuse=None):
         return output, logits
 
 
-# ### Placeholders
+#Placeholders
 
-# In[6]:
-
-
+#image inputs for training
 real_images = tf.placeholder(tf.float32,shape=[None,784])
+# latent vector 
 z = tf.placeholder(tf.float32,shape=[None,100])
 
 
-# ### Generator
 
-# In[7]:
 
 
 G = generator(z)
-
-
-# ### Discriminator 
-
-# In[8]:
-
-
 D_output_real , D_logits_real = discriminator(real_images)
-
-
-# In[9]:
-
-
 D_output_fake, D_logits_fake = discriminator(G,reuse=True)
 
 
-# ### Losses
-
-# In[10]:
-
-
+#Loss funtions - We have used two - one for each network.
 def loss_func(logits_in,labels_in):
     return tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=logits_in,labels=labels_in))
 
 
-# In[11]:
-
-
 D_real_loss = loss_func(D_logits_real,tf.ones_like(D_logits_real)* (0.9))
-
-
-# In[12]:
-
-
 D_fake_loss = loss_func(D_logits_fake,tf.zeros_like(D_logits_real))
 
-
-# In[13]:
-
-
 D_loss = D_real_loss + D_fake_loss
-
-
-# In[14]:
-
-
 G_loss = loss_func(D_logits_fake,tf.ones_like(D_logits_fake))
 
 
-# ### Optimizers
 
-# In[15]:
-
-
+#Optimizers
 learning_rate = 0.001
 
 
-# In[16]:
-
-
 tvars = tf.trainable_variables()
-
 d_vars = [var for var in tvars if 'dis' in var.name]
 g_vars = [var for var in tvars if 'gen' in var.name]
 
@@ -165,34 +94,22 @@ print([v.name for v in d_vars])
 print([v.name for v in g_vars])
 
 
-# In[17]:
-
-
 D_trainer = tf.train.AdamOptimizer(learning_rate).minimize(D_loss, var_list=d_vars)
 G_trainer = tf.train.AdamOptimizer(learning_rate).minimize(G_loss, var_list=g_vars)
 
 
-# ## Training Session
-
-# In[18]:
 
 
+# Training
 batch_size = 100
 epochs = 500
 init = tf.global_variables_initializer()
 saver = tf.train.Saver(var_list=g_vars)
 
-
-# In[19]:
-
-
-# Save a sample per epoch
+# Save a sample/generated image per epoch to judge progress of GAN.
 samples = []
 
-
-# In[20]:
-
-
+#Starting TF Session
 with tf.Session() as sess:
     
     sess.run(init)
@@ -215,7 +132,7 @@ with tf.Session() as sess:
             # -1 to 1 because of tanh activation
             batch_z = np.random.uniform(-1, 1, size=(batch_size, 100))
             
-            # Run optimizers, no need to save outputs, we won't use them
+            # Run optimizers, no need to save outputs, we won't use them.
             _ = sess.run(D_trainer, feed_dict={real_images: batch_images, z: batch_z})
             _ = sess.run(G_trainer, feed_dict={z: batch_z})
         
@@ -227,15 +144,13 @@ with tf.Session() as sess:
         gen_sample = sess.run(generator(z ,reuse=True),feed_dict={z: sample_z})
         
         samples.append(gen_sample)
-        
+  
+        #Save the model trained so far
 #         saver.save(sess, './models/500_epoch_model.ckpt')
 
 
-# In[21]:
-
-
+# Restoring 
 saver = tf.train.Saver(var_list=g_vars)
-
 new_samples = []
 with tf.Session() as sess:
     
@@ -248,13 +163,8 @@ with tf.Session() as sess:
         new_samples.append(gen_sample)
 
 
-# In[33]:
-
-
 plt.imshow(samples[0].reshape(28,28),cmap='Greys')
 
-
-# In[ ]:
 
 
 

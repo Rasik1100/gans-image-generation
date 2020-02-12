@@ -1,14 +1,9 @@
 
 # coding: utf-8
 
-# ## MNIST DCGAN
-# 
-# We're going to create a GAN that generates synthetic handwritten digits.
-# 
+# We're going to create a GAN that generates synthetic handwritten digits. 
 # Code used and modifed from:
 # - https://github.com/Zackory/Keras-MNIST-GAN/blob/master/mnist_dcgan.py
-
-# In[1]:
 
 
 import os
@@ -40,9 +35,10 @@ X_train = X_train[:, np.newaxis, :, :]
 # Use Adam as the Optimizer
 adam = Adam(lr=0.0002, beta_1=0.5)
 
+
+
 # Make our Generator Model
 generator = Sequential()
-
 # Transforms the input into a 7 × 7 128-channel feature map
 generator.add(Dense(128*7*7, input_dim=latent_dim))
 generator.add(LeakyReLU(0.2))
@@ -51,11 +47,12 @@ generator.add(UpSampling2D(size=(2, 2)))
 generator.add(Conv2D(64, kernel_size=(5, 5), padding='same'))
 generator.add(LeakyReLU(0.2))
 generator.add(UpSampling2D(size=(2, 2)))
-
 # Produces a 28 × 28 1-channel feature map (shape of a MNIST image)
 generator.add(Conv2D(1, kernel_size=(5, 5), padding='same', activation='tanh'))
 print(generator.summary())
 generator.compile(loss='binary_crossentropy', optimizer=adam)
+
+
 
 # Make our Discriminator Model
 discriminator = Sequential()
@@ -71,8 +68,10 @@ discriminator.add(Dense(1, activation='sigmoid'))
 print(discriminator.summary())
 discriminator.compile(loss='binary_crossentropy', optimizer=adam)
 
-# Creating the Adversarial Network. We need to make the Discriminator weights
-# non trainable. This only applies to the GAN model.
+
+#Combining both into a single GAN.
+# Creating the Adversarial Network. 
+# We need to make the Discriminator weights non trainable. This only applies to the GAN model.
 discriminator.trainable = False
 ganInput = Input(shape=(latent_dim,))
 x = generator(ganInput)
@@ -92,7 +91,8 @@ def plotLoss(epoch):
     plt.xlabel('Epoch')
     plt.ylabel('Loss')
     plt.legend()
-    plt.savefig('images/dcgan_loss_epoch_%d.png' % epoch)
+    plt.savefig('dcgan_loss/dcgan_loss_epoch_%d.png' % epoch)
+
 
 # Create a wall of generated MNIST images
 def plotGeneratedImages(epoch, examples=100, dim=(10, 10), figsize=(10, 10)):
@@ -105,21 +105,19 @@ def plotGeneratedImages(epoch, examples=100, dim=(10, 10), figsize=(10, 10)):
         plt.imshow(generatedImages[i, 0], interpolation='nearest', cmap='gray_r')
         plt.axis('off')
     plt.tight_layout()
-    plt.savefig('images/dcgan_generated_image_epoch_%d.png' % epoch)
+    plt.savefig('generated_images/dcgan_generated_image_epoch_%d.png' % epoch)
+
 
 # Save the generator and discriminator networks (and weights) for later use
 def saveModels(epoch):
-    generator.save('models/dcgan_generator_epoch_%d.h5' % epoch)
-    discriminator.save('models/dcgan_discriminator_epoch_%d.h5' % epoch)
+    generator.save('saved_models/dcgan_generator_epoch_%d.h5' % epoch)
+    discriminator.save('saved_models/dcgan_discriminator_epoch_%d.h5' % epoch)
 
 
-# ## Train our GAN and Plot the Synthetic Image Outputs 
-# 
+
+#TRAINING
+# Plot the Synthetic Image Outputs  
 # After each consecutive Epoch we can see how synthetic images being improved 
-
-# In[ ]:
-
-
 epochs = 5
 batchSize = 128
 batchCount = X_train.shape[0] / batchSize
