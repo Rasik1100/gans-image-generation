@@ -18,11 +18,11 @@ Standard normalisation for better accuracy. Batch normalisation will be
 applied to reduce over-fitting. Model that will be best for this application: ​A generative model - in our case the GAN, will be ideal for this.
 
 ####    Architecture guidelines for stable DCGANs - 
-*    		Use batchnorm in both the generator and the discriminator.
-*           Use ReLU activation in generator for all layers except for the output.
-*			For the output, we'll be using a Tanh activation fucntion
-* 			Use LeakyReLU activation in the discriminator for all layers.
+* Use batchnorm in both the generator and the discriminator.
+* Use ReLU activation in generator for all layers except for the output.
+*	For the output, we'll be using a Tanh activation fucntion
+* Use LeakyReLU activation in the discriminator for all layers.
 
 
-#### 3. Evaluation: ​ 
+## 3. Evaluation: ​ 
 We will minimise two losses i.e the Generator’s and the Discriminators - They will be trained together and will improve each others’ accuracy. When the predictions of the discriminator display close to a 50-50 chance of real/fake, that will be the goal for this project.
