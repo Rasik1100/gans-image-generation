@@ -10,10 +10,10 @@ it comes to *generating objects* that do not exist or imagination, vanilla neura
 
 ## 2. Methodology
 
-###c) Gathering data: ​
+### c) Gathering data: ​
 We will be using public data - starting from the CIFAR dataset, we will look through this dataset and probably others for a source of unsupervised learning, where in the algorithm will learn the distribution of the data and learn to generate similar but new images.
 
-###b) Processing: ​
+### b) Processing: ​
 Standard normalisation for better accuracy. Batch normalisation will be
 applied to reduce over-fitting. Model that will be best for this application: ​A generative model - in our case the GAN, will be ideal for this.
 
