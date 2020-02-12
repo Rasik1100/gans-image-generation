@@ -24,5 +24,5 @@ applied to reduce over-fitting. Model that will be best for this application: �
 * Use LeakyReLU activation in the discriminator for all layers.
 
 
-### 3. Evaluation: ​ 
+## 3. Evaluation: ​ 
 We will minimise two losses i.e the Generator’s and the Discriminators - They will be trained together and will improve each others’ accuracy. When the predictions of the discriminator display close to a 50-50 chance of real/fake, that will be the goal for this project.
