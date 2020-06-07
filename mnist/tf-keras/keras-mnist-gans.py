@@ -128,6 +128,7 @@ print('Batches per epoch:', batchCount)
 
 for e in range(1, epochs+1):
     print('-'*15, 'Epoch %d' % e, '-'*15)
+        
     for i in tqdm(range(int(batchCount))):
         # Get a random set of input noise and images
         noise = np.random.normal(0, 1, size=[batchSize, latent_dim])
